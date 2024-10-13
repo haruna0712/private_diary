@@ -15,7 +15,8 @@
             "django": true,
             "env": {
                 "DB_USER": "postgres",
-                "DB_PASSWORD": "Sirius01"
+                "DB_PASSWORD": "Sirius01",
+                "DJANGO_SETTINGS_MODULE": "private_diary.settings_dev"
             }
         }
     ]
