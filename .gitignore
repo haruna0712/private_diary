@@ -4,3 +4,6 @@
 # Pythonのコンパイルファイル
 __pycache__/
 
+media/
+
+backup/

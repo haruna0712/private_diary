@@ -169,8 +169,17 @@ ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'
 # ログアウトリンクのクリック一発でログアウトする設定
 ACCOUNT_LOGOUT_ON_GET = True
 
+MEDIA_URL = '/media/'
+
 # django-allauthが送信するメールの件名に自動付与される接頭辞をブランクにする設定
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 
 # デフォルトのメール送信元を設定
 DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL')
+
+# ログイン/ログアウト後の遷移先を設定
+LOGIN_REDIRECT_URL = 'diary:diary_list'
+
+# バックアップバッチ用
+BACKUP_PATH = 'backup/'
+NUM_SAVED_BACKUP = 30
