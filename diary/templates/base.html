@@ -30,7 +30,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
         <div class="container px-5">
-            <a class="navbar-brand" href="{% url 'diary:index' %}">PRIVATE DIARY</a>
+            <a class="navbar-brand" href="{% url 'diary:top_page' %}">SHARING SITE</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
                     aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span
                     class="navbar-toggler-icon"></span></button>
@@ -42,7 +42,7 @@
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% block active_diary_list %}{% endblock %}"
-                           href="{% url 'diary:diary_list' %}">DIARY LIST</a>
+                           href="{% url 'diary:diary_list' %}">LIST</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -84,7 +84,7 @@
 
     <!-- Footer -->
     <footer class="py-5 bg-black">
-        <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; Private Diary 2024</p>
+        <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; Sharing Site 2024</p>
         </div>
     </footer>
 

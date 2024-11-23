@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>アップロードされた動画</title>
+</head>
+<body>
+    <h1>アップロードされた動画</h1>
+    <ul>
+        {% for video in videos %}
+            <li>
+                <h3>{{ video.title }}</h3>
+                <p>{{ video.description }}</p>
+                <video width="400" controls>
+                    <source src="{{ video.video_file.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

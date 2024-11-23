@@ -3,8 +3,8 @@ import os
 from django import forms
 from django.core.mail import EmailMessage
 
-from .models import Diary
-
+from .models import Diary,Document
+from .models import Video
 
 class InquiryForm(forms.Form):
     name = forms.CharField(label='お名前', max_length=30)
@@ -49,9 +49,19 @@ class InquiryForm(forms.Form):
 class DiaryCreateForm(forms.ModelForm):
     class Meta:
         model = Diary
-        fields = ('title', 'content', 'photo1', 'photo2', 'photo3',)
+        fields = ('title', 'content', 'photo1', 'photo2', 'photo3',"file")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ['title', 'file']
+
+class VideoForm(forms.ModelForm):
+    class Meta:
+        model = Video
+        fields = ['title', 'video_file', 'description']

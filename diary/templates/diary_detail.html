@@ -21,6 +21,17 @@
 
     <div class="row">
         <div class="col-3">
+            <strong>値段</strong>
+        </div>
+        <div class="col-9">
+            {{ object.price }}
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-3">
             <strong>本文</strong>
         </div>
         <div class="col-9">
@@ -73,7 +84,8 @@
         </div>
     </div>
 
-    <a class="btn btn-success mt-5 mb-3" href="{% url 'diary:diary_update' object.pk %}">編集</a>
+    {#<a class="btn btn-success mt-5 mb-3" href="{% url 'diary:diary_update' object.pk %}">編集</a>#}
     <a class="btn btn-danger mt-5 ml-2 mb-3" href="{% url 'diary:diary_delete' object.pk %}">削除</a>
+    <a class="btn btn-primary mt-5 ml-2 mb-3" href="{% url 'diary:diary_credit' object.pk %}">購入</a>
 </div>
 {% endblock %}

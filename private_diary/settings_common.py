@@ -178,7 +178,7 @@ ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL')
 
 # ログイン/ログアウト後の遷移先を設定
-LOGIN_REDIRECT_URL = 'diary:diary_list'
+LOGIN_REDIRECT_URL = 'diary:top_page'
 
 # バックアップバッチ用
 BACKUP_PATH = 'backup/'
