@@ -47,7 +47,7 @@ class InquiryView(generic.FormView):
 class DiaryListView(LoginRequiredMixin, generic.ListView):
     model = Diary
     template_name = 'diary_list.html'
-    paginate_by = 2
+    paginate_by = 10
 
     def get_queryset(self):
         diaries = Diary.objects.filter(user=self.request.user).order_by('-created_at')
@@ -125,7 +125,7 @@ class DiaryDeleteView(LoginRequiredMixin, OnlyYouMixin, generic.DeleteView):
 class upload_file(LoginRequiredMixin, generic.ListView):
     model = Diary
     template_name = 'upload.html'
-    paginate_by = 2
+    paginate_by = 10
 
     def get_queryset(self):
         diaries = Diary.objects.filter(user=self.request.user).order_by('-created_at')

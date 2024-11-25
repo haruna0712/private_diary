@@ -5,20 +5,98 @@
 
 {% block active_diary_list %}active{% endblock %}
 
-
 {% block contents %}
-<div class="container my-div-style">
-    <div class="row">
-        <div class="col-3">
-            <strong>タイトル</strong>
-        </div>
-        <div class="col-9">
-            {{ object.title }}
+<!-- 支払い画面のコンテンツ -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">お支払い情報</h2>
+
+    <!-- 注文内容 -->
+    <div class="mb-4">
+        <h4 class="section-title">ご注文内容</h4>
+        <div class="row">
+            <div class="col-9">
+                <h5>{{ object.title }}</h5>
+                <p>価格: {{ object.price }}</p>
+            </div>
         </div>
     </div>
 
+    <hr>
+
+    <!-- 支払い方法 -->
+    <div class="mb-4">
+        <h4 class="section-title">お支払い方法</h4>
+        <div class="form-group">
+            <label for="card-name">カード名義人</label>
+            <input type="text" class="form-control" id="card-name" placeholder="カード名義人を入力">
+        </div>
+        <div class="form-group">
+            <label for="card-number">カード番号</label>
+            <input type="text" class="form-control" id="card-number" placeholder="カード番号を入力">
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label for="expiry-month">有効期限（月）</label>
+                    <input type="text" class="form-control" id="expiry-month" placeholder="MM">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label for="expiry-year">有効期限（年）</label>
+                    <input type="text" class="form-control" id="expiry-year" placeholder="YY">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="cvc">CVC</label>
+            <input type="text" class="form-control" id="cvc" placeholder="セキュリティコード">
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- 支払い方法 -->
+    <div class="mb-4">
+        <h4 class="section-title">支払い方法</h4>
+        <div class="payment-methods">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Logo_Visa_2011.svg" alt="Visa">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Mastercard_logo.svg" alt="MasterCard">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/JCB_logo.svg" alt="JCB">
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- 合計金額 -->
+    <div class="mb-4">
+        <h4 class="section-title">合計金額</h4>
+        <div class="row">
+            <div class="col-6">
+                <p>商品価格</p>
+            </div>
+            <div class="col-6 text-right">
+                <p>{{ object.price }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <p>手数料</p>
+            </div>
+            <div class="col-6 text-right">
+                <p>¥0</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <p><strong>合計</strong></p>
+            </div>
+            <div class="col-6 text-right">
+                <p><strong>{{ object.price }}</strong></p>
+            </div>
+        </div>
+    </div>
     
-    <a class="btn btn-secondary mt-5 ml-2 mb-3" href="{% url 'diary:diary_detail' object.pk %}">キャンセル</a>
     <a class="btn btn-primary mt-5 ml-2 mb-3" href="{% url 'diary:diary_buy' object.pk %}">購入</a>
 </div>
 {% endblock %}
