@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}日記一覧 | Private Diary{% endblock %}
+{% block title %}一覧 | Private Diary{% endblock %}
 
 {% block active_diary_list %}active{% endblock %}
 
@@ -30,7 +30,7 @@
             </div>
             <hr class="my-4">
             {% empty %}
-            <p>日記がありません。</p>
+            <p>商品がありません。</p>
             {% endfor %}
 
             <!-- ページネーション処理 -->

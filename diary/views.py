@@ -20,9 +20,9 @@ class OnlyYouMixin(UserPassesTestMixin):
     raise_exception = True
 
     def test_func(self):
-        # URLに埋め込まれた主キーから日記データを1件取得。取得できなかった場合は404エラー
+        # URLに埋め込まれた主キーからデータを1件取得。取得できなかった場合は404エラー
         diary = get_object_or_404(Diary, pk=self.kwargs['pk'])
-        # ログインユーザーと日記の作成ユーザーを比較し、異なればraise_exceptionの設定に従う
+        # ログインユーザーと作成ユーザーを比較し、異なればraise_exceptionの設定に従う
         return self.request.user == diary.user
 
 
@@ -67,11 +67,11 @@ class DiaryBuyView(LoginRequiredMixin,OnlyYouMixin,generic.DetailView):
         return reverse_lazy('diary:diary_detail', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
-        messages.success(self.request, '日記を更新しました。')
+        messages.success(self.request, '更新しました。')
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "日記の更新に失敗しました。")
+        messages.error(self.request, "更新に失敗しました。")
         return super().form_invalid(form)
 
 class DiaryCreditView(LoginRequiredMixin, OnlyYouMixin, generic.DetailView):
@@ -88,11 +88,11 @@ class DiaryCreateView(LoginRequiredMixin, generic.CreateView):
         diary = form.save(commit=False)
         diary.user = self.request.user
         diary.save()
-        messages.success(self.request, '日記を作成しました。')
+        messages.success(self.request, '作成しました。')
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "日記の作成に失敗しました。")
+        messages.error(self.request, "作成に失敗しました。")
         return super().form_invalid(form)
 
 
@@ -105,11 +105,11 @@ class DiaryUpdateView(LoginRequiredMixin, OnlyYouMixin, generic.UpdateView):
         return reverse_lazy('diary:diary_detail', kwargs={'pk': self.kwargs['pk']})
 
     def form_valid(self, form):
-        messages.success(self.request, '日記を更新しました。')
+        messages.success(self.request, '更新しました。')
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "日記の更新に失敗しました。")
+        messages.error(self.request, "更新に失敗しました。")
         return super().form_invalid(form)
 
 
