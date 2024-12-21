@@ -1,4 +1,5 @@
 import logging
+import docker
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -9,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from .forms import InquiryForm, DiaryCreateForm
 from .models import Diary,Document
 from .forms import DocumentForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import VideoForm
 from .models import Video
 
@@ -149,3 +150,35 @@ def upload_video(request):
 def video_list(request):
     videos = Video.objects.all()
     return render(request, 'video_list.html', {'videos': videos})
+
+def run_docker_calculation():
+    client = docker.from_env()
+
+    calculation_code = """
+import sys
+result = 2 + 3
+print(f"Calculation Result: {result}")
+"""
+
+    try:
+        # コンテナを起動して計算を実行
+        output = client.containers.run(
+            image="python:3.11",  # 使用するDockerイメージ
+            command=["python", "-c", calculation_code],  # 実行するコード
+            stdout=True,  # 標準出力を取得
+            stderr=True,  # 標準エラーを取得
+            remove=True  # 実行後にコンテナを削除
+        )
+        return output.decode("utf-8").strip()  # 結果を文字列にデコードして返す
+    except Exception as e:
+        return f"Error occurred: {e}"
+
+def docker_calculate(request, pk):
+    diary_object = get_object_or_404(Diary, pk=pk)
+
+    # Dockerコンテナを実行
+    result = run_docker_calculation()
+
+    return render(request, 'docker_result.html', {
+        'result': result  # 計算結果を新しいテンプレートに渡す
+    })

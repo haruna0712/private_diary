@@ -18,4 +18,5 @@ urlpatterns = [
     path('upload/', views.upload_file.as_view(), name='upload_file'),
     path('upload-video/', views.upload_video, name='upload_video'),
     path('videos/', views.video_list, name='video_list'),
+    path('diary/<int:pk>/docker_calculate/', views.docker_calculate, name='docker_calculate'),
 ]
