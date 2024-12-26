@@ -103,6 +103,12 @@
         <button type="submit" class="btn btn-secondary mt-5 ml-2 mb-3">実行</button>
     </form>
 
+    {% if url %}
+        <div class="alert alert-info mt-3">
+            <strong>出力ファイル名:</strong> {{ url }}
+        </div>
+    {% endif %}
+
     {% if result %}
         <div class="alert alert-info mt-3">
             <strong>出力ファイル名:</strong> {{ result }}

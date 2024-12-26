@@ -3,7 +3,6 @@ import zipfile
 import os
 import tempfile
 import docker
-print(docker.from_env().api.info())
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -236,14 +235,13 @@ def docker_calculate(request, pk):
     # Dockerイメージのビルド
     image, build_logs = client.images.build(path=temp_dir_docker, tag="text-to-speech", rm=True)
 
-    host_sample_txt = os.path.join(os.getcwd(), "media") # ホスト側のファイル
-    host_sample_txt_path = os.path.join(os.getcwd(), "media", "sample.txt")
+    host_sample_txt_path = os.path.join(settings.MEDIA_ROOT, "uploads", "sample.txt")
     if os.path.exists(host_sample_txt_path):
         logger.info(f"ファイルが存在します: {host_sample_txt_path}")
     else:
         logger.error(f"ファイルが存在しません: {host_sample_txt_path}")
         
-    host_output_dir = os.path.join(os.getcwd(), "media","output")  # ホスト側のディレクトリ
+    host_output_dir = os.path.join(settings.MEDIA_ROOT,"output")  # ホスト側のディレクトリ
     # 計算を実行
     container = client.containers.run(
         image="text-to-speech",  # 実行するイメージ名
@@ -266,6 +264,7 @@ def docker_calculate(request, pk):
     # 結果を新しいテンプレートに渡す
     return render(request, 'docker_result.html', {
         'result': container.decode("utf-8"),  # 計算結果を表示
+        'url': os.path.join(settings.MEDIA_URL,container.decode("utf-8")),
     })
 
 
@@ -284,7 +283,10 @@ class FileUploadView(LoginRequiredMixin, OnlyYouMixin, generic.DetailView):
             uploaded_file = request.FILES['file']
             
             # サーバーにファイルを保存
-            save_path = "./media/sample.txt"  # 保存場所を適切に変更
+            save_dir = os.path.join(settings.MEDIA_ROOT, 'uploads')
+            os.makedirs(save_dir, exist_ok=True)  # ディレクトリが存在しない場合は作成
+
+            save_path = os.path.join(save_dir, "sample.txt")
             with open(save_path, 'wb') as destination:
                 destination.write(uploaded_file.read())  # 一括で読み込んで保存
             
