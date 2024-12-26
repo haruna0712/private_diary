@@ -98,7 +98,7 @@
         <button type="submit" class="btn btn-success mt-3">ファイルアップロード</button>
     </form>
 
-    <form method="POST" action="{% url 'diary:docker_calculate' object.pk %}?url={{ object.file.url }}">
+    <form method="POST" action="{% url 'diary:docker_calculate' object.pk %}?filename={{ object.file.name }}">
         {% csrf_token %}
         <button type="submit" class="btn btn-secondary mt-5 ml-2 mb-3">実行</button>
     </form>

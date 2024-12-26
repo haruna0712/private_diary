@@ -195,9 +195,9 @@ def run_docker_calculation():
 
 def docker_calculate(request, pk):
     # クエリパラメータから URL を取得
-    url = request.GET.get('url')
-    print(url)
-    url = "." + url
+    filename = request.GET.get('filename')
+    print(filename)
+    url = os.path.join(settings.MEDIA_ROOT, filename)
     diary_object = get_object_or_404(Diary, pk=pk)
     temp_dir = tempfile.mkdtemp()
 
