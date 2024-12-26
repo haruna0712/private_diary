@@ -1,18 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}計算結果{% endblock %}
+{% block title %}実行結果{% endblock %}
 
 {% block contents %}
 <div class="container">
-    <h2>計算結果</h2>
+    <h2>実行結果</h2>
 
     <div class="alert alert-info">
-        <strong>計算結果:</strong> {{ result }}
+        <strong>出力ファイル名:</strong> {{ result }}
     </div>
     <h2>アップロードされたファイル:</h2>
-    <h1>"{{ MEDIA_URL }}"</h1>
-    <a href="/media/temp.txt" target="_blank">アップロードされたファイルを開く</a>
+    <a href="/media/{{ result }}" target="_blank">アップロードされたファイルを開く</a>
     
 </div>
 {% endblock %}

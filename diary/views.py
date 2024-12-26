@@ -262,7 +262,7 @@ def docker_calculate(request, pk):
     except OSError:
         pass
 
-    
+    #return HttpResponseRedirect(reverse('diary:diary_detail', kwargs={'pk': pk}))
     # 結果を新しいテンプレートに渡す
     return render(request, 'docker_result.html', {
         'result': container.decode("utf-8"),  # 計算結果を表示
@@ -284,7 +284,7 @@ class FileUploadView(LoginRequiredMixin, OnlyYouMixin, generic.DetailView):
             uploaded_file = request.FILES['file']
             
             # サーバーにファイルを保存
-            save_path = "./media/temp.txt"  # 保存場所を適切に変更
+            save_path = "./media/sample.txt"  # 保存場所を適切に変更
             with open(save_path, 'wb') as destination:
                 destination.write(uploaded_file.read())  # 一括で読み込んで保存
             

@@ -100,12 +100,12 @@
 
     <form method="POST" action="{% url 'diary:docker_calculate' object.pk %}?url={{ object.file.url }}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-secondary mt-5 ml-2 mb-3">Docker計算実行</button>
+        <button type="submit" class="btn btn-secondary mt-5 ml-2 mb-3">実行</button>
     </form>
 
     {% if result %}
         <div class="alert alert-info mt-3">
-            <strong>計算結果:</strong> {{ result }}
+            <strong>出力ファイル名:</strong> {{ result }}
         </div>
     {% endif %}
 </div>
