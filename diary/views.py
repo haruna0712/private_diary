@@ -1,11 +1,17 @@
 import logging
+import zipfile
+import os
+import tempfile
 import docker
-
+print(docker.from_env().api.info())
 from django.contrib import messages
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views import generic
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from .forms import InquiryForm, DiaryCreateForm
 from .models import Diary,Document
@@ -151,34 +157,139 @@ def video_list(request):
     videos = Video.objects.all()
     return render(request, 'video_list.html', {'videos': videos})
 
+def build_docker_image():
+    """
+    Dockerイメージをビルドする関数
+    """
+    client = docker.from_env()
+
+    try:
+        # Dockerfileが存在するディレクトリでビルド
+        image, logs = client.images.build(path='docker', tag="python_calculation")
+        for log in logs:
+            print(log)  # ビルドのログを表示
+        return image
+    except Exception as e:
+        return f"Error occurred while building Docker image: {e}"
+
 def run_docker_calculation():
     client = docker.from_env()
 
-    calculation_code = """
-import sys
-result = 2 + 3
-print(f"Calculation Result: {result}")
-"""
-
     try:
-        # コンテナを起動して計算を実行
-        output = client.containers.run(
-            image="python:3.11",  # 使用するDockerイメージ
-            command=["python", "-c", calculation_code],  # 実行するコード
+        # Dockerイメージがない場合はビルド
+        image = build_docker_image()
+
+        # コンテナを実行して計算を実行
+        container = client.containers.run(
+            image="python_calculation",  # 作成したイメージ名
             stdout=True,  # 標準出力を取得
             stderr=True,  # 標準エラーを取得
             remove=True  # 実行後にコンテナを削除
         )
-        return output.decode("utf-8").strip()  # 結果を文字列にデコードして返す
+
+        # 結果をデコードして取得
+        output = container.decode("utf-8").strip()
+        return output  # 計算結果を返す
+    
     except Exception as e:
         return f"Error occurred: {e}"
 
 def docker_calculate(request, pk):
+    # クエリパラメータから URL を取得
+    url = request.GET.get('url')
+    print(url)
+    url = "." + url
     diary_object = get_object_or_404(Diary, pk=pk)
+    temp_dir = tempfile.mkdtemp()
 
+
+    #zip_file_local_path = os.path.join(url)
+    # ZIPファイルを解凍
+    with zipfile.ZipFile(url, 'r') as zip_ref:
+            zip_ref.extractall(temp_dir)
+    
+
+    print(temp_dir)
+
+    # Dockerfile が存在するディレクトリを探す
+    temp_dir_docker = None
+    for root, dirs, files in os.walk(temp_dir):
+        if 'Dockerfile' in files:
+            temp_dir_docker = root
+            break
+
+    # Dockerfile が見つかった場合、temp_dir_docker にパスが設定される
+    if temp_dir_docker:
+        print("Dockerfile found in:", temp_dir_docker)
+    else:
+        print("Dockerfile was not found in the extracted files.")
+
+    if not os.path.exists(os.path.join(temp_dir_docker, "Dockerfile")):
+            print("Dockerfileがない")
+            return render(request, 'docker_result.html', {'error': 'Dockerfile が見つかりません。'})
     # Dockerコンテナを実行
-    result = run_docker_calculation()
+    #result = run_docker_calculation()
+    # Dockerクライアントを作成
+    client = docker.from_env()
 
+    
+    # Dockerイメージのビルド
+    image, build_logs = client.images.build(path=temp_dir_docker, tag="text-to-speech", rm=True)
+
+    host_sample_txt = os.path.join(os.getcwd(), "media") # ホスト側のファイル
+    host_sample_txt_path = os.path.join(os.getcwd(), "media", "sample.txt")
+    if os.path.exists(host_sample_txt_path):
+        logger.info(f"ファイルが存在します: {host_sample_txt_path}")
+    else:
+        logger.error(f"ファイルが存在しません: {host_sample_txt_path}")
+        
+    host_output_dir = os.path.join(os.getcwd(), "media","output")  # ホスト側のディレクトリ
+    # 計算を実行
+    container = client.containers.run(
+        image="text-to-speech",  # 実行するイメージ名
+        volumes={
+            host_sample_txt_path: {'bind': '/app/sample.txt', 'mode': 'ro'},  # sample.txtのマウント
+            host_output_dir: {'bind': '/app/output', 'mode': 'rw'}  # outputディレクトリのマウント
+        },
+        stdout=True,  # 標準出力を取得
+        stderr=True,  # 標準エラーを取得
+        remove=True  # 実行後にコンテナを削除
+    )
+    
+    # 一時ディレクトリのクリーンアップ
+    try:
+        os.rmdir(temp_dir)
+    except OSError:
+        pass
+
+    
+    # 結果を新しいテンプレートに渡す
     return render(request, 'docker_result.html', {
-        'result': result  # 計算結果を新しいテンプレートに渡す
+        'result': container.decode("utf-8"),  # 計算結果を表示
     })
+
+
+
+
+class FileUploadView(LoginRequiredMixin, OnlyYouMixin, generic.DetailView):
+    model = Diary
+    template_name = 'diary/diary_detail.html'  # 詳細表示のテンプレート
+    
+    def post(self, request, *args, **kwargs):
+        # Diaryオブジェクトを取得
+        diary = self.get_object()
+        
+        # ファイルが送信されているかチェック
+        if request.FILES.get('file'):
+            uploaded_file = request.FILES['file']
+            
+            # サーバーにファイルを保存
+            save_path = "./media/temp.txt"  # 保存場所を適切に変更
+            with open(save_path, 'wb') as destination:
+                destination.write(uploaded_file.read())  # 一括で読み込んで保存
+            
+            # 保存後にリダイレクトして更新されたページを表示
+            return HttpResponseRedirect(reverse('diary:diary_detail', kwargs={'pk': self.kwargs['pk']}))
+        
+        # それ以外のPOST処理やGETの場合の処理（ファイルアップロードが無い場合）
+        return super().post(request, *args, **kwargs)

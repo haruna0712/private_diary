@@ -88,7 +88,17 @@
     {#<a class="btn btn-danger mt-5 ml-2 mb-3" href="{% url 'diary:diary_delete' object.pk %}">削除</a>#}
     <a class="btn btn-primary mt-5 ml-2 mb-3" href="{% url 'diary:diary_credit' object.pk %}">購入</a>
 
-    <form method="POST" action="{% url 'diary:docker_calculate' object.pk %}">
+    <h2>ファイルアップロード</h2>
+    <form method="POST" action="{% url 'diary:file_upload' object.pk %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="file">ファイル選択</label>
+            <input type="file" name="file" id="file" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success mt-3">ファイルアップロード</button>
+    </form>
+
+    <form method="POST" action="{% url 'diary:docker_calculate' object.pk %}?url={{ object.file.url }}">
         {% csrf_token %}
         <button type="submit" class="btn btn-secondary mt-5 ml-2 mb-3">Docker計算実行</button>
     </form>
